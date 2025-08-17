@@ -5,7 +5,7 @@ import type { FormPersistConfig, UseFormPersistResult } from "./types";
 export function useFormPersist<T extends FieldValues = FieldValues>(
   name: string,
   {
-    storage = window.localStorage,
+    storage,
     control,
     setValue,
     exclude = [],
@@ -28,7 +28,10 @@ export function useFormPersist<T extends FieldValues = FieldValues>(
   const lastValuesRef = useRef<Record<string, unknown>>({});
   const initializedRef = useRef(false);
 
-  const getStorage = useCallback(() => storage, [storage]);
+  const getStorage = useCallback(
+    () => storage ?? window.localStorage,
+    [storage]
+  );
 
   const clearStorage = useCallback(
     () => getStorage().removeItem(name),
