@@ -1,6 +1,6 @@
 {
   "name": "@liorpo/react-hook-form-persist",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A React Hook Form persistence library with TypeScript support",
   "type": "module",
   "main": "./dist/index.js",
@@ -63,10 +63,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/react-hook-form-persist.git"
+    "url": "https://github.com/liorp/react-hook-form-persist.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/react-hook-form-persist/issues"
+    "url": "https://github.com/liorp/react-hook-form-persist/issues"
   },
-  "homepage": "https://github.com/yourusername/react-hook-form-persist#readme"
+  "homepage": "https://github.com/liorp/react-hook-form-persist#readme"
 }
