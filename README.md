@@ -272,6 +272,10 @@ This repository uses a single CI/CD workflow (`.github/workflows/ci.yml`) that h
 2. Create a new GitHub release
 3. The workflow will automatically test and publish to npm
 
+## Acknowledgments
+
+Thanks to the original [react-hook-form-persist](https://www.npmjs.com/package/react-hook-form-persist) package for inspiration.
+
 ## License
 
 MIT - Lior Polak
