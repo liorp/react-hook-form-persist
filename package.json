@@ -1,6 +1,6 @@
 {
   "name": "@liorpo/react-hook-form-persist",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "A React Hook Form persistence library with TypeScript support",
   "type": "module",
   "main": "./dist/index.js",
