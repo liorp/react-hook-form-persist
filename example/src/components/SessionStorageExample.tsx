@@ -40,7 +40,7 @@ function SessionStorageExample() {
   };
 
   const clearSettings = () => {
-    sessionStorage.removeItem("user-settings-v1");
+    sessionStorage.removeItem("react-hook-form-persist:user-settings-v1");
     form.reset();
     setMessage("All settings cleared!");
     setTimeout(() => setMessage(""), 3000);
@@ -49,7 +49,9 @@ function SessionStorageExample() {
   // Monitor sessionStorage changes
   useEffect(() => {
     const updateStorageData = () => {
-      const data = sessionStorage.getItem("user-settings-v1");
+      const data = sessionStorage.getItem(
+        "react-hook-form-persist:user-settings-v1"
+      );
       setStorageData(data);
     };
 
@@ -148,7 +150,9 @@ function SessionStorageExample() {
       </div>
 
       <div className="status info">
-        <strong>SessionStorage Content (user-settings-v1):</strong>
+        <strong>
+          SessionStorage Content (react-hook-form-persist:user-settings-v1):
+        </strong>
         <div className="code">
           {storageData ? (
             <pre>{JSON.stringify(JSON.parse(storageData), null, 2)}</pre>

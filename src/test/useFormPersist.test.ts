@@ -38,7 +38,9 @@ describe("useFormPersist", () => {
     );
 
     expect(mockStorage.getItem).toHaveBeenCalledTimes(1);
-    expect(mockStorage.getItem).toHaveBeenCalledWith("test-form-v1");
+    expect(mockStorage.getItem).toHaveBeenCalledWith(
+      "react-hook-form-persist:test-form-v1"
+    );
     expect(mockSetValue).toHaveBeenCalledTimes(2);
     expect(mockSetValue).toHaveBeenCalledWith("name", "John", {
       shouldValidate: false,
@@ -88,7 +90,7 @@ describe("useFormPersist", () => {
   });
 
   it("should handle timeout expiration", () => {
-    const mockData = { _timestamp: Date.now() - 2000, name: "John" };
+    const mockData = { _savedAt: Date.now() - 2000, name: "John" };
     mockStorage.getItem.mockReturnValue(JSON.stringify(mockData));
     const onTimeout = vi.fn();
 
@@ -103,7 +105,9 @@ describe("useFormPersist", () => {
     );
 
     expect(onTimeout).toHaveBeenCalled();
-    expect(mockStorage.removeItem).toHaveBeenCalledWith("test-form-v1");
+    expect(mockStorage.removeItem).toHaveBeenCalledWith(
+      "react-hook-form-persist:test-form-v1"
+    );
   });
 
   it("should save data to storage when watched values change", () => {
@@ -122,7 +126,7 @@ describe("useFormPersist", () => {
 
     expect(mockStorage.setItem).toHaveBeenCalledTimes(1);
     expect(mockStorage.setItem).toHaveBeenCalledWith(
-      "test-form-v1",
+      "react-hook-form-persist:test-form-v1",
       JSON.stringify(mockWatchedValues)
     );
   });
@@ -141,7 +145,9 @@ describe("useFormPersist", () => {
     });
 
     expect(mockStorage.removeItem).toHaveBeenCalledTimes(1);
-    expect(mockStorage.removeItem).toHaveBeenCalledWith("test-form-v1");
+    expect(mockStorage.removeItem).toHaveBeenCalledWith(
+      "react-hook-form-persist:test-form-v1"
+    );
   });
 
   it("should use localStorage as default storage", () => {
@@ -164,7 +170,9 @@ describe("useFormPersist", () => {
       })
     );
 
-    expect(mockLocalStorage.getItem).toHaveBeenCalledWith("test-form-v1");
+    expect(mockLocalStorage.getItem).toHaveBeenCalledWith(
+      "react-hook-form-persist:test-form-v1"
+    );
 
     window.localStorage = originalLocalStorage;
   });
@@ -222,7 +230,7 @@ describe("useFormPersist", () => {
     });
 
     expect(mockStorage.setItem).toHaveBeenCalledWith(
-      "test-form-v1",
+      "react-hook-form-persist:test-form-v1",
       JSON.stringify(newValues)
     );
 
@@ -266,7 +274,7 @@ describe("useFormPersist", () => {
 
     expect(mockStorage.setItem).toHaveBeenCalledTimes(1);
     expect(mockStorage.setItem).toHaveBeenCalledWith(
-      "test-form-v1",
+      "react-hook-form-persist:test-form-v1",
       JSON.stringify(updatedValues)
     );
 
@@ -298,7 +306,7 @@ describe("useFormPersist", () => {
     rerender();
 
     expect(mockStorage.setItem).toHaveBeenCalledWith(
-      "test-form-v1",
+      "react-hook-form-persist:test-form-v1",
       JSON.stringify(newValues)
     );
   });
