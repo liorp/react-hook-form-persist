@@ -39,7 +39,7 @@ function DebouncedFormExample() {
 
     const originalSetItem = sessionStorage.setItem;
     sessionStorage.setItem = function (key, value) {
-      if (key === "debounced-form-v1") {
+      if (key === "react-hook-form-persist:debounced-form-v1") {
         handleStorageChange();
       }
       return originalSetItem.call(this, key, value);
@@ -53,7 +53,9 @@ function DebouncedFormExample() {
   // Monitor sessionStorage content
   useEffect(() => {
     const updateStorageData = () => {
-      const data = sessionStorage.getItem("debounced-form-v1");
+      const data = sessionStorage.getItem(
+        "react-hook-form-persist:debounced-form-v1"
+      );
       setStorageData(data);
     };
 
@@ -71,7 +73,7 @@ function DebouncedFormExample() {
     form.reset();
     setSaveCount(0);
     setLastSaved(null);
-    sessionStorage.removeItem("debounced-form-v1");
+    sessionStorage.removeItem("react-hook-form-persist:debounced-form-v1");
   };
 
   return (
@@ -166,7 +168,9 @@ function DebouncedFormExample() {
       </div>
 
       <div className="status info">
-        <strong>SessionStorage Content (debounced-form-v1):</strong>
+        <strong>
+          SessionStorage Content (react-hook-form-persist:debounced-form-v1):
+        </strong>
         <div className="code">
           {storageData ? (
             <pre>{JSON.stringify(JSON.parse(storageData), null, 2)}</pre>

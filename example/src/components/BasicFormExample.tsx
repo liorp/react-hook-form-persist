@@ -39,13 +39,15 @@ function BasicFormExample() {
   const clearForm = () => {
     form.reset();
     setLastSubmitted(null);
-    localStorage.removeItem("basic-form-v1");
+    localStorage.removeItem("react-hook-form-persist:basic-form-v1");
   };
 
   // Monitor localStorage changes
   useEffect(() => {
     const updateStorageData = () => {
-      const data = localStorage.getItem("basic-form-v1");
+      const data = localStorage.getItem(
+        "react-hook-form-persist:basic-form-v1"
+      );
       setStorageData(data);
     };
 
@@ -142,7 +144,11 @@ function BasicFormExample() {
           {storageData ? (
             <pre>
               {JSON.stringify(
-                JSON.parse(localStorage.getItem("basic-form-v1") || "{}"),
+                JSON.parse(
+                  localStorage.getItem(
+                    "react-hook-form-persist:basic-form-v1"
+                  ) || "{}"
+                ),
                 null,
                 2
               )}

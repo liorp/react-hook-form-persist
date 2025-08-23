@@ -28,14 +28,19 @@ export function useFormPersist<T extends FieldValues = FieldValues>(
   const lastValuesRef = useRef<Record<string, unknown>>({});
   const initializedRef = useRef(false);
 
+  const getStorageKey = useCallback(
+    () => `react-hook-form-persist:${name}`,
+    [name]
+  );
+
   const getStorage = useCallback(
     () => storage ?? window.localStorage,
     [storage]
   );
 
   const clearStorage = useCallback(
-    () => getStorage().removeItem(name),
-    [getStorage, name]
+    () => getStorage().removeItem(getStorageKey()),
+    [getStorage, getStorageKey]
   );
 
   const valuesHaveChanged = useCallback(
@@ -65,12 +70,12 @@ export function useFormPersist<T extends FieldValues = FieldValues>(
 
     isRestoringRef.current = true;
 
-    const storageRawValues = getStorage().getItem(name);
+    const storageRawValues = getStorage().getItem(getStorageKey());
     if (storageRawValues) {
-      const { _timestamp = null, ...values } = JSON.parse(storageRawValues);
+      const { _savedAt = null, ...values } = JSON.parse(storageRawValues);
       const currTimestamp = Date.now();
 
-      if (timeout && currTimestamp - _timestamp > timeout) {
+      if (timeout && currTimestamp - _savedAt > timeout) {
         onTimeout?.();
         clearStorage();
       } else {
@@ -97,7 +102,7 @@ export function useFormPersist<T extends FieldValues = FieldValues>(
     initializedRef.current = true;
   }, [
     getStorage,
-    name,
+    getStorageKey,
     exclude,
     setValue,
     validate,
@@ -129,9 +134,9 @@ export function useFormPersist<T extends FieldValues = FieldValues>(
 
       if (Object.entries(values).length && valuesHaveChanged(values)) {
         if (timeout != null) {
-          values._timestamp = Date.now();
+          values._savedAt = Date.now();
         }
-        getStorage().setItem(name, JSON.stringify(values));
+        getStorage().setItem(getStorageKey(), JSON.stringify(values));
         lastValuesRef.current = structuredClone(values);
       }
 
@@ -173,7 +178,7 @@ export function useFormPersist<T extends FieldValues = FieldValues>(
     watchedValues,
     timeout,
     exclude,
-    name,
+    getStorageKey,
     getStorage,
     debounceDelay,
     valuesHaveChanged,
