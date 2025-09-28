@@ -1,4 +1,4 @@
-# react-hook-form-persist
+# @liorpo/react-hook-form-persist
 
 A lightweight React Hook Form persistence library. Automatically save and restore form data to localStorage.
 
@@ -15,7 +15,7 @@ A lightweight React Hook Form persistence library. Automatically save and restor
 ## Installation
 
 ```bash
-npm install react-hook-form-persist
+npm install @liorpo/react-hook-form-persist
 ```
 
 ## Quick Start
@@ -24,7 +24,7 @@ npm install react-hook-form-persist
 
 ```tsx
 import { useForm } from "react-hook-form";
-import { useFormPersist } from "react-hook-form-persist";
+import { useFormPersist } from "@liorpo/react-hook-form-persist";
 
 function MyForm() {
   const form = useForm({
@@ -56,7 +56,7 @@ function MyForm() {
 
 ```tsx
 import { useForm } from "react-hook-form";
-import { FormPersist } from "react-hook-form-persist";
+import { FormPersist } from "@liorpo/react-hook-form-persist";
 
 function MyForm() {
   const form = useForm({
@@ -139,7 +139,7 @@ All props from `FormPersistConfig` except `control` and `setValue`, plus:
 ### Using SessionStorage
 
 ```tsx
-import { useFormPersist } from "react-hook-form-persist";
+import { useFormPersist } from "@liorpo/react-hook-form-persist";
 
 function MyForm() {
   const form = useForm();
