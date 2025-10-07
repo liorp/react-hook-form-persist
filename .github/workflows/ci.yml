@@ -4,16 +4,15 @@ on:
   push:
     branches: [main]
     tags:
-      - 'v*'
+      - "v*"
   pull_request:
     branches: [main]
   release:
     types: [published]
-  
 
 permissions:
   id-token: write
-  contents: write
+  contents: read
 
 jobs:
   test:
@@ -56,7 +55,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: "24.x"
           registry-url: "https://registry.npmjs.org"
 
       - run: npm ci
@@ -73,4 +72,4 @@ jobs:
               --generate-notes
 
       - name: Publish to npm
-        run: npm publish --access public --provenance --verbose
+        run: npm publish --provenance --access public --verbose

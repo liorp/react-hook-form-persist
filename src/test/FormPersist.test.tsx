@@ -14,7 +14,7 @@ describe("FormPersist", () => {
     vi.clearAllMocks();
   });
 
-  it("should render null", () => {
+  it.concurrent("should render null", () => {
     const mockForm = {
       control: {},
       setValue: vi.fn(),
@@ -27,7 +27,7 @@ describe("FormPersist", () => {
     expect(container.firstChild).toBeNull();
   });
 
-  it("should call useFormPersist with correct parameters", () => {
+  it.concurrent("should call useFormPersist with correct parameters", () => {
     const mockForm = {
       control: {},
       setValue: vi.fn(),

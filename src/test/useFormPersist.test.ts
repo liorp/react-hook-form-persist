@@ -1,31 +1,21 @@
 import { act, renderHook } from "@testing-library/react";
-import type { Control, UseFormSetValue } from "react-hook-form";
 import { useWatch } from "react-hook-form";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useFormPersist } from "../useFormPersist";
+import { createMocks } from "./mock";
 
 vi.mock("react-hook-form", () => ({
   useWatch: vi.fn(),
 }));
 
 describe("useFormPersist", () => {
-  const mockSetValue = vi.fn() as UseFormSetValue<Record<string, unknown>>;
-  const mockControl = {} as Control<Record<string, unknown>>;
-  const mockStorage = {
-    getItem: vi.fn(),
-    setItem: vi.fn(),
-    removeItem: vi.fn(),
-    length: 0,
-    clear: vi.fn(),
-    key: vi.fn(),
-  };
-
   beforeEach(() => {
     vi.clearAllMocks();
     (useWatch as unknown as ReturnType<typeof vi.fn>).mockReturnValue({});
   });
 
-  it("should restore data from storage on mount", () => {
+  it.concurrent("should restore data from storage on mount", () => {
+    const { mockSetValue, mockControl, mockStorage } = createMocks();
     const mockData = { name: "John", email: "john@example.com" };
     mockStorage.getItem.mockReturnValue(JSON.stringify(mockData));
 
@@ -54,7 +44,8 @@ describe("useFormPersist", () => {
     });
   });
 
-  it("should exclude specified fields from restoration", () => {
+  it.concurrent("should exclude specified fields from restoration", () => {
+    const { mockSetValue, mockControl, mockStorage } = createMocks();
     const mockData = {
       name: "John",
       email: "john@example.com",
@@ -89,7 +80,8 @@ describe("useFormPersist", () => {
     );
   });
 
-  it("should handle timeout expiration", () => {
+  it.concurrent("should handle timeout expiration", () => {
+    const { mockSetValue, mockControl, mockStorage } = createMocks();
     const mockData = { _savedAt: Date.now() - 2000, name: "John" };
     mockStorage.getItem.mockReturnValue(JSON.stringify(mockData));
     const onTimeout = vi.fn();
@@ -110,28 +102,33 @@ describe("useFormPersist", () => {
     );
   });
 
-  it("should save data to storage when watched values change", () => {
-    const mockWatchedValues = { name: "John", email: "john@example.com" };
-    (useWatch as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
-      mockWatchedValues
-    );
+  it.concurrent(
+    "should save data to storage when watched values change",
+    () => {
+      const { mockSetValue, mockControl, mockStorage } = createMocks();
+      const mockWatchedValues = { name: "John", email: "john@example.com" };
+      (useWatch as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
+        mockWatchedValues
+      );
 
-    renderHook(() =>
-      useFormPersist("test-form-v1", {
-        control: mockControl,
-        setValue: mockSetValue,
-        storage: mockStorage,
-      })
-    );
+      renderHook(() =>
+        useFormPersist("test-form-v1", {
+          control: mockControl,
+          setValue: mockSetValue,
+          storage: mockStorage,
+        })
+      );
 
-    expect(mockStorage.setItem).toHaveBeenCalledTimes(1);
-    expect(mockStorage.setItem).toHaveBeenCalledWith(
-      "react-hook-form-persist:test-form-v1",
-      JSON.stringify(mockWatchedValues)
-    );
-  });
+      expect(mockStorage.setItem).toHaveBeenCalledTimes(1);
+      expect(mockStorage.setItem).toHaveBeenCalledWith(
+        "react-hook-form-persist:test-form-v1",
+        JSON.stringify(mockWatchedValues)
+      );
+    }
+  );
 
-  it("should clear storage when clear function is called", () => {
+  it.concurrent("should clear storage when clear function is called", () => {
+    const { mockSetValue, mockControl, mockStorage } = createMocks();
     const { result } = renderHook(() =>
       useFormPersist("test-form-v1", {
         control: mockControl,
@@ -150,7 +147,8 @@ describe("useFormPersist", () => {
     );
   });
 
-  it("should use localStorage as default storage", () => {
+  it.concurrent("should use localStorage as default storage", () => {
+    const { mockSetValue, mockControl } = createMocks();
     const mockLocalStorage = {
       getItem: vi.fn(),
       setItem: vi.fn(),
@@ -177,111 +175,124 @@ describe("useFormPersist", () => {
     window.localStorage = originalLocalStorage;
   });
 
-  it("should call onDataRestored callback when data is restored", () => {
-    const mockData = { name: "John", email: "john@example.com" };
-    mockStorage.getItem.mockReturnValue(JSON.stringify(mockData));
-    const onDataRestored = vi.fn();
+  it.concurrent(
+    "should call onDataRestored callback when data is restored",
+    () => {
+      const { mockSetValue, mockControl, mockStorage } = createMocks();
+      const mockData = { name: "John", email: "john@example.com" };
+      mockStorage.getItem.mockReturnValue(JSON.stringify(mockData));
+      const onDataRestored = vi.fn();
 
-    renderHook(() =>
-      useFormPersist("test-form-v1", {
-        control: mockControl,
-        setValue: mockSetValue,
-        storage: mockStorage,
-        onDataRestored,
-      })
-    );
+      renderHook(() =>
+        useFormPersist("test-form-v1", {
+          control: mockControl,
+          setValue: mockSetValue,
+          storage: mockStorage,
+          onDataRestored,
+        })
+      );
 
-    expect(onDataRestored).toHaveBeenCalledWith({
-      name: "John",
-      email: "john@example.com",
-    });
-  });
+      expect(onDataRestored).toHaveBeenCalledWith({
+        name: "John",
+        email: "john@example.com",
+      });
+    }
+  );
 
-  it("should debounce storage writes when debounceDelay is provided", async () => {
-    vi.useFakeTimers();
+  it.concurrent(
+    "should debounce storage writes when debounceDelay is provided",
+    async () => {
+      const { mockSetValue, mockControl, mockStorage } = createMocks();
+      vi.useFakeTimers();
 
-    const initialValues = { name: "" };
-    (useWatch as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
-      initialValues
-    );
+      const initialValues = { name: "" };
+      (useWatch as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
+        initialValues
+      );
 
-    const { rerender } = renderHook(() =>
-      useFormPersist("test-form-v1", {
-        control: mockControl,
-        setValue: mockSetValue,
-        storage: mockStorage,
-        debounceDelay: 500,
-      })
-    );
+      const { rerender } = renderHook(() =>
+        useFormPersist("test-form-v1", {
+          control: mockControl,
+          setValue: mockSetValue,
+          storage: mockStorage,
+          debounceDelay: 500,
+        })
+      );
 
-    mockStorage.setItem.mockClear();
+      mockStorage.setItem.mockClear();
 
-    const newValues = { name: "John" };
-    (useWatch as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
-      newValues
-    );
+      const newValues = { name: "John" };
+      (useWatch as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
+        newValues
+      );
 
-    rerender();
+      rerender();
 
-    expect(mockStorage.setItem).not.toHaveBeenCalled();
+      expect(mockStorage.setItem).not.toHaveBeenCalled();
 
-    act(() => {
-      vi.advanceTimersByTime(500);
-    });
+      act(() => {
+        vi.advanceTimersByTime(500);
+      });
 
-    expect(mockStorage.setItem).toHaveBeenCalledWith(
-      "react-hook-form-persist:test-form-v1",
-      JSON.stringify(newValues)
-    );
+      expect(mockStorage.setItem).toHaveBeenCalledWith(
+        "react-hook-form-persist:test-form-v1",
+        JSON.stringify(newValues)
+      );
 
-    vi.useRealTimers();
-  });
+      vi.useRealTimers();
+    }
+  );
 
-  it("should cancel previous debounced saves when new changes occur", async () => {
-    vi.useFakeTimers();
+  it.concurrent(
+    "should cancel previous debounced saves when new changes occur",
+    async () => {
+      const { mockSetValue, mockControl, mockStorage } = createMocks();
+      vi.useFakeTimers();
 
-    const initialValues = { name: "John" };
-    const updatedValues = { name: "Jane" };
+      const initialValues = { name: "John" };
+      const updatedValues = { name: "Jane" };
 
-    (useWatch as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
-      initialValues
-    );
+      (useWatch as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
+        initialValues
+      );
 
-    const { rerender } = renderHook(() =>
-      useFormPersist("test-form-v1", {
-        control: mockControl,
-        setValue: mockSetValue,
-        storage: mockStorage,
-        debounceDelay: 500,
-      })
-    );
+      const { rerender } = renderHook(() =>
+        useFormPersist("test-form-v1", {
+          control: mockControl,
+          setValue: mockSetValue,
+          storage: mockStorage,
+          debounceDelay: 500,
+        })
+      );
 
-    (useWatch as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
-      updatedValues
-    );
+      (useWatch as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
+        updatedValues
+      );
 
-    rerender();
+      rerender();
 
-    act(() => {
-      vi.advanceTimersByTime(300);
-    });
+      act(() => {
+        vi.advanceTimersByTime(300);
+      });
 
-    expect(mockStorage.setItem).not.toHaveBeenCalled();
+      expect(mockStorage.setItem).not.toHaveBeenCalled();
 
-    act(() => {
-      vi.advanceTimersByTime(500);
-    });
+      act(() => {
+        vi.advanceTimersByTime(500);
+      });
 
-    expect(mockStorage.setItem).toHaveBeenCalledTimes(1);
-    expect(mockStorage.setItem).toHaveBeenCalledWith(
-      "react-hook-form-persist:test-form-v1",
-      JSON.stringify(updatedValues)
-    );
+      expect(mockStorage.setItem).toHaveBeenCalledTimes(1);
+      expect(mockStorage.setItem).toHaveBeenCalledWith(
+        "react-hook-form-persist:test-form-v1",
+        JSON.stringify(updatedValues)
+      );
 
-    vi.useRealTimers();
-  });
+      vi.useRealTimers();
+    }
+  );
 
-  it("should save immediately when debounceDelay is 0", () => {
+  it.concurrent("should save immediately when debounceDelay is 0", () => {
+    const { mockSetValue, mockControl, mockStorage } = createMocks();
     const initialValues = { name: "" };
     (useWatch as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
       initialValues
