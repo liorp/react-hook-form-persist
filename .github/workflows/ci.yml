@@ -70,4 +70,4 @@ jobs:
               --generate-notes
 
       - name: Publish to npm
-        run: npm publish  --access public --provenance
+        run: npm publish --access public --provenance --verbose
