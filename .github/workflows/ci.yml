@@ -3,10 +3,13 @@ name: CI/CD
 on:
   push:
     branches: [main]
+    tags:
+      - 'v*'
   pull_request:
     branches: [main]
   release:
     types: [published]
+  
 
 permissions:
   id-token: write
